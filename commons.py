@@ -575,7 +575,7 @@ class Custom_RLTask_Learning_TD_OnPolicy(AbstractRLTask):
         return average_returns
 
 
-    def visualize_episode(self, max_number_steps = None):
+    def visualize_episode(self, max_number_steps = None,save_im=False):
         """
         This function executes and plot an episode (or a fixed number 'max_number_steps' steps).
         You may want to disable some agent behaviours when visualizing(e.g. self.agent.learning = False)
@@ -604,7 +604,8 @@ class Custom_RLTask_Learning_TD_OnPolicy(AbstractRLTask):
             # self.env.render(action, reward)
             # print("Initial state", commons.get_crop_chars_from_observation(state))
             plt.imshow(get_crop_pixel_from_observation(observation))
-            plt.savefig("experiment_results/step"+str(timestep)+"_OnPolicy_cliff.png")
+            if save_im:
+                plt.savefig("experiment_results/step"+str(timestep)+"_OnPolicy_cliff.png")
 
             plt.show()
 
@@ -703,7 +704,7 @@ class Custom_RLTask_Learning_TD_OffPolicy(AbstractRLTask):
         return average_returns
 
 
-    def visualize_episode(self, max_number_steps = None):
+    def visualize_episode(self, max_number_steps = None,save_im=False):
         """
         This function executes and plot an episode (or a fixed number 'max_number_steps' steps).
         You may want to disable some agent behaviours when visualizing(e.g. self.agent.learning = False)
@@ -737,7 +738,8 @@ class Custom_RLTask_Learning_TD_OffPolicy(AbstractRLTask):
                 plt.imshow(get_crop_pixel_from_observation(self.env._get_observation(self.env.last_observation)))
             else:
                 plt.imshow(get_crop_pixel_from_observation(self.env.env._get_observation(self.env.last_observation)))
-            plt.savefig("experiment_results/step"+str(timestep)+"_OffPolicy_cliff.png")
+            if save_im:
+                plt.savefig("experiment_results/step"+str(timestep)+"_OffPolicy_cliff.png")
 
             plt.show()
 

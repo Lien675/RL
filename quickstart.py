@@ -101,17 +101,17 @@ agent2 = commons.MonteCarloAgent('mca',empty_room_env2.action_space,epsilon)
 off_task = commons.Custom_RLTask_Learning_TD_OffPolicy(empty_room_env2,agent2,alpha=0.5,discount_factor=0.9,roomID=id)
 
 # rltask = commons.Custom_RLTask_Learning_MC(empty_room_env, agent)
-av_returns_on = on_ltask.interact(150)
-on_ltask.visualize_episode(max_number_steps=30)
+av_returns_on = on_ltask.interact(20)
+on_ltask.visualize_episode(max_number_steps=30,save_im=False)
 
-av_returns_off = off_task.interact(150)
-off_task.visualize_episode(max_number_steps=30)
+av_returns_off = off_task.interact(20)
+off_task.visualize_episode(max_number_steps=30,save_im=False)
 
 plt.plot(av_returns_on, label= "TD On Policy")
 plt.plot(av_returns_off, label= "TD Off Policy")
 plt.title("average returns")
 plt.legend()
-plt.savefig("OffPolicy_VS_OnPolicy_Cliff.png")
+plt.savefig("OffPolicy_VS_OnPolicy_Cliff_weinigEps.png")
 plt.show()
 
 
