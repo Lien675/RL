@@ -85,37 +85,66 @@ import commons
 
 
 #Taks 2.1
+#experiment TD on VS off and TD on VS MC
+# # id = me.ROOM_WITH_LAVA
+# id = me.EMPTY_ROOM
+# # id = me.CLIFF
+#
+# empty_room_env = me.get_minihack_envirnment(id, add_pixel=True)
+# state = empty_room_env.reset()
+# epsilon=0.15
+# agent = commons.MonteCarloAgent('mca',empty_room_env.action_space,epsilon)
+# # on_ltask = commons.Custom_RLTask_Learning_TD_OnPolicy(empty_room_env, agent,alpha=0.5, discount_factor=0.9,roomID=id)
+# mc_ltask = commons.Custom_RLTask_Learning_MC(empty_room_env, agent, roomID=id, discountF=0.9)
+#
+# empty_room_env2= me.get_minihack_envirnment(id, add_pixel=True)
+# state = empty_room_env2.reset()
+# agent2 = commons.MonteCarloAgent('mca',empty_room_env2.action_space,epsilon)
+# off_task = commons.Custom_RLTask_Learning_TD_OffPolicy(empty_room_env2,agent2,alpha=0.5,discount_factor=0.9,roomID=id)
+#
+# # rltask = commons.Custom_RLTask_Learning_MC(empty_room_env, agent)
+# av_returns_mc = mc_ltask.interact(500)
+# mc_ltask.visualize_episode(max_number_steps=30)
+#
+# av_returns_off = off_task.interact(500)
+# off_task.visualize_episode(max_number_steps=30,save_im=False)
+#
+# plt.plot(av_returns_mc, label= "MC")
+# plt.plot(av_returns_off, label= "TD Off Policy")
+# plt.title("average returns")
+# plt.legend()
+# plt.savefig("OffPolicy_VS_MC_EmptyRoom4.png")
+# plt.show()
+
+#experiment: different LRs:
 # id = me.ROOM_WITH_LAVA
 id = me.EMPTY_ROOM
 # id = me.CLIFF
+LRs = [0.1,0.3,0.5,0.8,1]
+plt.figure()
+results = []
+for LR in LRs:
+    empty_room_env = me.get_minihack_envirnment(id, add_pixel=True)
+    state = empty_room_env.reset()
+    epsilon=0.3
 
-empty_room_env = me.get_minihack_envirnment(id, add_pixel=True)
-state = empty_room_env.reset()
-epsilon=0.15
-agent = commons.MonteCarloAgent('mca',empty_room_env.action_space,epsilon)
-# on_ltask = commons.Custom_RLTask_Learning_TD_OnPolicy(empty_room_env, agent,alpha=0.5, discount_factor=0.9,roomID=id)
-mc_ltask = commons.Custom_RLTask_Learning_MC(empty_room_env, agent, roomID=id, discountF=0.9)
+    agent2 = commons.MonteCarloAgent('mca',empty_room_env.action_space,epsilon)
+    off_task = commons.Custom_RLTask_Learning_TD_OffPolicy(empty_room_env,agent2,alpha=LR,discount_factor=0.9,roomID=id)
 
-empty_room_env2= me.get_minihack_envirnment(id, add_pixel=True)
-state = empty_room_env2.reset()
-agent2 = commons.MonteCarloAgent('mca',empty_room_env2.action_space,epsilon)
-off_task = commons.Custom_RLTask_Learning_TD_OffPolicy(empty_room_env2,agent2,alpha=0.5,discount_factor=0.9,roomID=id)
+    av_returns_mc = off_task.interact(100)
+    results.append(av_returns_mc)
+    off_task.visualize_episode(max_number_steps=30)
 
-# rltask = commons.Custom_RLTask_Learning_MC(empty_room_env, agent)
-av_returns_mc = mc_ltask.interact(500)
-mc_ltask.visualize_episode(max_number_steps=30)
+plt.plot(results[0], label= "LR "+str(LRs[0]))
+plt.plot(results[1], label= "LR "+str(LRs[1]))
+plt.plot(results[2], label= "LR "+str(LRs[2]))
+plt.plot(results[3], label= "LR "+str(LRs[3]))
+plt.plot(results[4], label= "LR "+str(LRs[4]))
 
-av_returns_off = off_task.interact(500)
-off_task.visualize_episode(max_number_steps=30,save_im=False)
-
-plt.plot(av_returns_mc, label= "MC")
-plt.plot(av_returns_off, label= "TD Off Policy")
 plt.title("average returns")
 plt.legend()
-plt.savefig("OffPolicy_VS_MC_EmptyRoom4.png")
+plt.savefig("OffPolicy_LRtest_EmptyRoom.png")
 plt.show()
-
-
 
 #task 2.2
 # # id = me.ROOM_WITH_MONSTER
