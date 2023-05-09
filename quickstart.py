@@ -118,32 +118,36 @@ import commons
 
 #experiment: different LRs:
 # id = me.ROOM_WITH_LAVA
-id = me.EMPTY_ROOM
+# id = me.EMPTY_ROOM
 # id = me.CLIFF
-LRs = [0.1,0.3,0.5,0.8,1]
+id = me.ROOM_WITH_MONSTER
+
+epsilons = [0.1,0.2,0.3,0.5,0.8,1]
 plt.figure()
 results = []
-for LR in LRs:
+for eps in epsilons:
     empty_room_env = me.get_minihack_envirnment(id, add_pixel=True)
     state = empty_room_env.reset()
-    epsilon=0.3
+    # epsilon=0.3
 
-    agent2 = commons.MonteCarloAgent('mca',empty_room_env.action_space,epsilon)
-    off_task = commons.Custom_RLTask_Learning_TD_OffPolicy(empty_room_env,agent2,alpha=LR,discount_factor=0.9,roomID=id)
+    agent2 = commons.MonteCarloAgent('mca',empty_room_env.action_space,eps)
+    # off_task = commons.Custom_RLTask_Learning_TD_OffPolicy(empty_room_env,agent2,alpha=LR,discount_factor=0.9,roomID=id)
+    on_ltask = commons.Custom_RLTask_Learning_TD_OnPolicy(empty_room_env, agent2,alpha=0.5, discount_factor=0.9,roomID=id)
 
-    av_returns_mc = off_task.interact(100)
+    av_returns_mc = on_ltask.interact(200)
     results.append(av_returns_mc)
-    off_task.visualize_episode(max_number_steps=30)
+    on_ltask.visualize_episode(max_number_steps=30)
 
-plt.plot(results[0], label= "LR "+str(LRs[0]))
-plt.plot(results[1], label= "LR "+str(LRs[1]))
-plt.plot(results[2], label= "LR "+str(LRs[2]))
-plt.plot(results[3], label= "LR "+str(LRs[3]))
-plt.plot(results[4], label= "LR "+str(LRs[4]))
+plt.plot(results[0], label= "LR "+str(epsilons[0]))
+plt.plot(results[1], label= "LR "+str(epsilons[1]))
+plt.plot(results[2], label= "LR "+str(epsilons[2]))
+plt.plot(results[3], label= "LR "+str(epsilons[3]))
+plt.plot(results[4], label= "LR "+str(epsilons[4]))
+plt.plot(results[5], label= "LR "+str(epsilons[5]))
 
 plt.title("average returns")
 plt.legend()
-plt.savefig("OffPolicy_LRtest_EmptyRoom.png")
+plt.savefig("OnPolicy_epsilonTest_roomWithMonster.png")
 plt.show()
 
 #task 2.2
