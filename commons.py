@@ -315,7 +315,7 @@ class AbstractRLTask():
         raise NotImplementedError()
 
 class Custom_RLTask_Learning_MC(AbstractRLTask):
-    def __init__(self, env, agent,roomID):
+    def __init__(self, env, agent,roomID, discountF):
         super().__init__(env, agent)
         action_count = self.env.action_space.n
         self.roomid = roomID
@@ -338,6 +338,19 @@ class Custom_RLTask_Learning_MC(AbstractRLTask):
 
         self.Qmatrix = np.zeros((env_width*env_height, 4))
 
+
+        self.Qdict = {}
+        self.visit_counts = {}
+        for state_id in range(len(states_list)):
+            self.Qdict[state_id] ={}
+            self.visit_counts[state_id] ={}
+            for action in range(action_count):
+                self.Qdict[state_id][action] = 0
+                self.visit_counts[state_id][action] = 0
+
+
+        self.discountF = discountF
+
     def interact(self, n_episodes):
         """
         This function executes n_episodes of interaction between the agent and the environment.
@@ -351,6 +364,7 @@ class Custom_RLTask_Learning_MC(AbstractRLTask):
         # rewards = 0
         for i in range(n_episodes):
             curr_state = self.env.reset()
+            curr_state = copy.deepcopy(get_crop_chars_from_observation(curr_state))
             # average_return=0
             sum_rewards = 0 # = G = return
             curr_reward=0
@@ -358,15 +372,14 @@ class Custom_RLTask_Learning_MC(AbstractRLTask):
             #generate episode:
             episodes=[]
             while True:
-                if not self.useDoulbeEnv:
+                # if not self.useDoulbeEnv:
+                #
+                #     curr_state =copy.deepcopy(get_crop_chars_from_observation(self.env._get_observation(self.env.last_observation)))
+                # else:
+                #     curr_state = copy.deepcopy(
+                #         get_crop_chars_from_observation(self.env.env._get_observation(self.env.last_observation)))
 
-                    curr_state =copy.deepcopy(get_crop_chars_from_observation(self.env._get_observation(self.env.last_observation)))
-                else:
-                    curr_state = copy.deepcopy(
-                        get_crop_chars_from_observation(self.env.env._get_observation(self.env.last_observation)))
 
-                # plt.imshow(get_crop_pixel_from_observation(self.env._get_observation(self.env.last_observation)))
-                # plt.show()
                 # let agent choose action
                 action = self.agent.act(curr_state, curr_reward, self.Qmatrix, self.states_list)
                 # perform action on env and see results and
@@ -375,20 +388,20 @@ class Custom_RLTask_Learning_MC(AbstractRLTask):
                 sum_rewards += reward
 
                 episodes.append((curr_state, action,reward))
+                curr_state = copy.deepcopy(get_crop_chars_from_observation(next_observation))
 
                 if terminated:
                     break
-
-
-                # curr_state = next_observation
 
             T=len(episodes)-1
             G=0
             for t in range(T-1,0,-1):
                 _,_,Rt1 = episodes[t+1]
                 St,At,Rt = episodes[t]
-                G = G + Rt1
-                # test = any(tup[0]==St and tup[1]==At for tup in episodes[:t])
+                G = self.discountF *G + Rt1
+
+
+                #test if its first visit
                 test=False
                 for S,A,_ in episodes[:t]:
                     if np.array_equal(S,St) and np.array_equal(A,At):
@@ -402,9 +415,9 @@ class Custom_RLTask_Learning_MC(AbstractRLTask):
                     n = len(self.Returns[state_index][At])
                     Qn=self.Qmatrix[state_index, At]
                     update = Qn +(Rt-Qn)/n
-                    self.Qmatrix[state_index, action] = update #incremental approach --> doesnt seem to work (not converging)
-                    # self.Qs[At][ state_index] = np.average(self.Returns[At][state_index]) #naive average
-                    # self.Qmatrix[state_index, action] = np.average(self.Returns[state_index][At])
+                    # self.Qmatrix[state_index, action] = update #incremental approach --> doesnt seem to work (not converging)
+                    # self.Qmatrix[At][ state_index] = np.average(self.Returns[At][state_index]) #naive average
+                    self.Qmatrix[state_index, action] = np.average(self.Returns[state_index][At])
 
             average_return = (sum(average_returns)+sum_rewards)/(i+1)
             average_returns.append(average_return)
