@@ -176,43 +176,75 @@ id_lava_mod = me.ROOM_WITH_LAVA_MODIFIED
 # off_task = commons.Custom_RLTask_Learning_TD_OffPolicy(empty_room_env2,agent2,alpha=0.1,discount_factor=0.9,roomID=id)
 # av_returns_off = off_task.interact(1000)
 
-id = id_cliff
-num_episodes = 500
+# id = id_cliff
+# num_episodes = 500
+# epsilon=0.3
+# gamma=0.9
+# alpha = 0.5
+#
+# repeat=5
+# on_returns = []
+# for _ in range(repeat):
+#     # returns_on = run_OnPolicy(id,num_episodes,epsilon,alpha, gamma)
+#     av_returns_mc = run_MC(id, num_episodes,epsilon,gamma)
+#
+#     on_returns.append(av_returns_mc)
+# on_returns = np.array(on_returns)
+# av_returns_on = np.mean(on_returns,axis=0)
+#
+#
+# off_returns = []
+# for _ in range(repeat):
+#     returns_off = run_OffPolicy(id,num_episodes,epsilon,alpha, gamma)
+#     off_returns.append(returns_off)
+# off_returns = np.array(off_returns)
+# av_returns_off = np.mean(off_returns,axis=0)
+# # av_returns_mc = run_MC(id, num_episodes,epsilon,gamma)
+#
+# # plt.plot(av_returns_mc, label= "MC")
+# print(av_returns_on)
+# plt.plot(av_returns_on, label= "MC")
+# plt.plot(av_returns_off, label= "TD Off Policy")
+# plt.title("average returns "+id+"( epsilon="+str(epsilon)+", gamma="+str(gamma)+", alpha="+str(alpha)+" )")
+# plt.legend()
+# plt.xlabel("episodes")
+# plt.ylabel("return")
+# plt.savefig("MC_VS_offPol_"+id+".png")
+# plt.show()
+
+#experiment: different LRs:
+id = id_lava
+num_episodes = 600
 epsilon=0.3
 gamma=0.9
 alpha = 0.5
+repeat=3
+LRs=[0.1,0.3,0.5,0.8,1]
+results= []
+for LR in LRs:
+    off_returns = []
+    for _ in range(repeat):
+        returns_off = run_OffPolicy(id,num_episodes,epsilon,LR, gamma)
+        off_returns.append(returns_off)
+    off_returns = np.array(off_returns)
+    av_returns_off = np.mean(off_returns,axis=0)
+    results.append(av_returns_off)
 
-repeat=5
-on_returns = []
-for _ in range(repeat):
-    # returns_on = run_OnPolicy(id,num_episodes,epsilon,alpha, gamma)
-    av_returns_mc = run_MC(id, num_episodes,epsilon,gamma)
-
-    on_returns.append(av_returns_mc)
-on_returns = np.array(on_returns)
-av_returns_on = np.mean(on_returns,axis=0)
-
-
-off_returns = []
-for _ in range(repeat):
-    returns_off = run_OffPolicy(id,num_episodes,epsilon,alpha, gamma)
-    off_returns.append(returns_off)
-off_returns = np.array(off_returns)
-av_returns_off = np.mean(off_returns,axis=0)
-# av_returns_mc = run_MC(id, num_episodes,epsilon,gamma)
-
-# plt.plot(av_returns_mc, label= "MC")
-print(av_returns_on)
-plt.plot(av_returns_on, label= "MC")
-plt.plot(av_returns_off, label= "TD Off Policy")
-plt.title("average returns "+id+"( epsilon="+str(epsilon)+", gamma="+str(gamma)+", alpha="+str(alpha)+" )")
+plt.plot(results[0], label= "LR "+str(LRs[0]))
+plt.plot(results[1], label= "LR "+str(LRs[1]))
+plt.plot(results[2], label= "LR "+str(LRs[2]))
+plt.plot(results[3], label= "LR "+str(LRs[3]))
+plt.plot(results[4], label= "LR "+str(LRs[4]))
+# plt.plot(av_returns_off, label= "TD Off Policy")
+plt.title("average returns LR tests"+id+"( epsilon="+str(epsilon)+", gamma="+str(gamma)+")")
 plt.legend()
 plt.xlabel("episodes")
 plt.ylabel("return")
-plt.savefig("MC_VS_offPol_"+id+".png")
+plt.savefig("offPol_LRtest_"+id+"2.png")
 plt.show()
 
-#experiment: different LRs:
+
+
 # id = me.ROOM_WITH_LAVA
 # id = me.EMPTY_ROOM
 # id = me.CLIFF
