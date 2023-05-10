@@ -968,6 +968,7 @@ class Custom_RLTask(AbstractRLTask):
         :return: a list of episode avergae returns  (see assignment for a definition
         """
         average_returns = []
+        returns = []
 
 
         # rewards = 0
@@ -988,8 +989,9 @@ class Custom_RLTask(AbstractRLTask):
 
                 if terminated:
                     break
-
-            average_return = (sum(average_returns)+sum_rewards)/(i+1)
+            returns.append(sum_rewards)
+            average_return = sum(returns)/(i+1)
+            # average_return = (sum(average_returns)+sum_rewards)/(i+1)
             average_returns.append(average_return)
             print("episode "+str(i)+" sum_rewards: "+str(sum_rewards))
 
