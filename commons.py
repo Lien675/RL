@@ -651,7 +651,7 @@ class Custom_RLTask_Learning_TD_OnPolicy(AbstractRLTask):
             print(curr_state)
             plt.imshow(get_crop_pixel_from_observation(observation))
             if save_im:
-                plt.savefig("OnPol/step"+str(timestep)+"_OnPolicy_"+str(self.roomid)+"2.png")
+                plt.savefig("OnPol2/step"+str(timestep)+"_OnPolicy_"+str(self.roomid)+"2.png")
 
             plt.show()
             curr_state=next_state
@@ -788,7 +788,7 @@ class Custom_RLTask_Learning_TD_OffPolicy(AbstractRLTask):
             else:
                 plt.imshow(get_crop_pixel_from_observation(self.env.env._get_observation(self.env.last_observation)))
             if save_im:
-                plt.savefig("experiment_results/step"+str(timestep)+"_OffPolicy_"+str(self.roomid)+".png")
+                plt.savefig("OffPol/step"+str(timestep)+"_OffPolicy_"+str(self.roomid)+".png")
 
             plt.show()
 

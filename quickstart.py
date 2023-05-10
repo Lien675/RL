@@ -172,17 +172,17 @@ id2 = me.ROOM_WITH_LAVA_MODIFIED
 empty_room_env = me.get_minihack_envirnment(id, add_pixel=False)
 state = empty_room_env.reset()
 
-eps=0.2
-agent = commons.MonteCarloAgent('mca',empty_room_env.action_space,eps)
-
-on_task = commons.Custom_RLTask_Learning_TD_OnPolicy(empty_room_env,agent,alpha=0.4,discount_factor=0.9,roomID=id)
-av_returns_mc = on_task.interact(500)
-empty_room_env = me.get_minihack_envirnment(id, add_pixel=True)
-state = empty_room_env.reset()
-on_task2 = commons.Custom_RLTask_Learning_TD_OnPolicy(empty_room_env,agent,alpha=0.4,discount_factor=0.9,roomID=id,Qvalues = on_task.Qmatrix)
-on_task2.visualize_episode(max_number_steps=30,save_im=True)
-
-
+# eps=0.2
+# agent = commons.MonteCarloAgent('mca',empty_room_env.action_space,eps)
+#
+# on_task = commons.Custom_RLTask_Learning_TD_OnPolicy(empty_room_env,agent,alpha=0.4,discount_factor=0.9,roomID=id)
+# av_returns_mc = on_task.interact(500)
+# empty_room_env = me.get_minihack_envirnment(id, add_pixel=True)
+# state = empty_room_env.reset()
+# on_task2 = commons.Custom_RLTask_Learning_TD_OnPolicy(empty_room_env,agent,alpha=0.4,discount_factor=0.9,roomID=id,Qvalues = on_task.Qmatrix)
+# on_task2.visualize_episode(max_number_steps=30,save_im=True)
+#
+#
 
 
 empty_room_env = me.get_minihack_envirnment(id2, add_pixel=False)
@@ -191,11 +191,11 @@ state = empty_room_env.reset()
 eps=0.2
 agent = commons.MonteCarloAgent('mca',empty_room_env.action_space,eps)
 
-on_task = commons.Custom_RLTask_Learning_TD_OnPolicy(empty_room_env,agent,alpha=0.1,discount_factor=0.9,roomID=id2)
-av_returns_mc = on_task.interact(300)
+on_task = commons.Custom_RLTask_Learning_TD_OffPolicy(empty_room_env,agent,alpha=0.5,discount_factor=0.9,roomID=id2)
+av_returns_mc = on_task.interact(600)
 empty_room_env = me.get_minihack_envirnment(id2, add_pixel=True)
 state = empty_room_env.reset()
-on_task2 = commons.Custom_RLTask_Learning_TD_OnPolicy(empty_room_env,agent,alpha=0.1,discount_factor=0.9,roomID=id2,Qvalues = on_task.Qmatrix)
+on_task2 = commons.Custom_RLTask_Learning_TD_OffPolicy(empty_room_env,agent,alpha=0.5,discount_factor=0.9,roomID=id2,Qvalues = on_task.Qmatrix)
 on_task2.visualize_episode(max_number_steps=30,save_im=True)
 
 
