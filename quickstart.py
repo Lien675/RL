@@ -188,15 +188,16 @@ state = empty_room_env.reset()
 empty_room_env = me.get_minihack_envirnment(id2, add_pixel=False)
 state = empty_room_env.reset()
 
-eps=0.2
+eps=0.3
 agent = commons.MonteCarloAgent('mca',empty_room_env.action_space,eps)
-
-on_task = commons.Custom_RLTask_Learning_TD_OffPolicy(empty_room_env,agent,alpha=0.5,discount_factor=0.9,roomID=id2)
-av_returns_mc = on_task.interact(600)
+rltask = commons.Custom_RLTask_Learning_MC(empty_room_env, agent, id2,discountF=0.9) #works, shortest path found
+# on_task = commons.Custom_RLTask_Learning_TD_OffPolicy(empty_room_env,agent,alpha=0.5,discount_factor=0.9,roomID=id2)
+av_returns_mc = rltask.interact(600)
 empty_room_env = me.get_minihack_envirnment(id2, add_pixel=True)
 state = empty_room_env.reset()
-on_task2 = commons.Custom_RLTask_Learning_TD_OffPolicy(empty_room_env,agent,alpha=0.5,discount_factor=0.9,roomID=id2,Qvalues = on_task.Qmatrix)
-on_task2.visualize_episode(max_number_steps=30,save_im=True)
+rltask2 = commons.Custom_RLTask_Learning_MC(empty_room_env, agent, id2,discountF=0.9,Qvalues = rltask.Qmatrix) #works, shortest path found
+# on_task2 = commons.Custom_RLTask_Learning_TD_OffPolicy(empty_room_env,agent,alpha=0.5,discount_factor=0.9,roomID=id2,Qvalues = on_task.Qmatrix)
+rltask2.visualize_episode(max_number_steps=30,save_im=True)
 
 
 # state = empty_room_env.reset()
