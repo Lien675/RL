@@ -315,7 +315,7 @@ class AbstractRLTask():
         raise NotImplementedError()
 
 class Custom_RLTask_Learning_MC(AbstractRLTask):
-    def __init__(self, env, agent,roomID, discountF):
+    def __init__(self, env, agent,roomID, discountF, Qvalues=None):
         super().__init__(env, agent)
         action_count = self.env.action_space.n
         self.roomid = roomID
@@ -336,17 +336,21 @@ class Custom_RLTask_Learning_MC(AbstractRLTask):
         # self.Returns = [[[] for _ in range(env_width*env_height)] for _ in range(action_count)]
         self.Returns = [[[] for _ in range(action_count)] for _ in range(env_width*env_height)]
 
-        self.Qmatrix = np.zeros((env_width*env_height, 4))
+        if Qvalues is None:
+            self.Qmatrix = np.zeros((env_width*env_height, 4))
+        else:
+            self.Qmatrix=Qvalues
+        self.visit_counts = np.zeros((env_width*env_height, 4))
 
 
-        self.Qdict = {}
-        self.visit_counts = {}
-        for state_id in range(len(states_list)):
-            self.Qdict[state_id] ={}
-            self.visit_counts[state_id] ={}
-            for action in range(action_count):
-                self.Qdict[state_id][action] = 0
-                self.visit_counts[state_id][action] = 0
+        # self.Qdict = {}
+        # self.visit_counts = {}
+        # for state_id in range(len(states_list)):
+        #     self.Qdict[state_id] ={}
+        #     self.visit_counts[state_id] ={}
+        #     for action in range(action_count):
+        #         self.Qdict[state_id][action] = 0
+        #         self.visit_counts[state_id][action] = 0
 
 
         self.discountF = discountF
@@ -395,29 +399,48 @@ class Custom_RLTask_Learning_MC(AbstractRLTask):
 
             T=len(episodes)-1
             G=0
-            for t in range(T-1,0,-1):
-                _,_,Rt1 = episodes[t+1]
-                St,At,Rt = episodes[t]
-                G = self.discountF *G + Rt1
-
-
-                #test if its first visit
-                test=False
-                for S,A,_ in episodes[:t]:
-                    if np.array_equal(S,St) and np.array_equal(A,At):
-                        test=True
+            counter = 0
+            for St,At,Rt in reversed(episodes):
+                G = G + self.discountF*Rt
+                firstVisit = True
+                for j in range(counter+1, len(episodes)):
+                    S = episodes[::-1][j][0]
+                    A = episodes[::-1][j][1]
+                    if np.array_equal(S,St) and A==At:
+                        firstVisit=False
                         break
-                if not test: #first visit MC
-                    user_row,user_col = extract_user_location_from_state(St)
+                if firstVisit:
+                    user_row, user_col = extract_user_location_from_state(St)
                     state_index = self.states_list.index((user_row, user_col))
 
-                    self.Returns[state_index][At].append(G)
-                    n = len(self.Returns[state_index][At])
-                    Qn=self.Qmatrix[state_index, At]
-                    update = Qn +(Rt-Qn)/n
-                    # self.Qmatrix[state_index, action] = update #incremental approach --> doesnt seem to work (not converging)
-                    # self.Qmatrix[At][ state_index] = np.average(self.Returns[At][state_index]) #naive average
-                    self.Qmatrix[state_index, action] = np.average(self.Returns[state_index][At])
+                    # self.Returns[state_index][At].append(G)
+                    self.visit_counts[state_index][At] +=1
+                    n=self.visit_counts[state_index][At]
+                    self.Qmatrix[state_index, At] = self.Qmatrix[state_index, At] +(1/n)*(G - self.Qmatrix[state_index, At])
+
+                counter+=1
+            # for t in range(T-1,0,-1):
+            #     _,_,Rt1 = episodes[t+1]
+            #     St,At,Rt = episodes[t]
+            #     G = G + self.discountF *Rt1
+            #     #test if its first visit
+            #     test=False
+            #     for S,A,_ in episodes[:t]:
+            #         if np.array_equal(S,St) and np.array_equal(A,At):
+            #             test=True
+            #             break
+            #     if not test: #first visit MC
+            #         user_row,user_col = extract_user_location_from_state(St)
+            #         state_index = self.states_list.index((user_row, user_col))
+            #
+            #         self.Returns[state_index][At].append(G)
+            #         n = len(self.Returns[state_index][At])
+            #         Qn=self.Qmatrix[state_index, At]
+            #         update = Qn +(Rt-Qn)/n
+            #         # self.Qmatrix[state_index, action] = update #incremental approach --> doesnt seem to work (not converging)
+            #         # self.Qmatrix[At][ state_index] = np.average(self.Returns[At][state_index]) #naive average
+            #         # self.Qmatrix[state_index, action] = np.average(self.Returns[state_index][At])
+            #         self.Qmatrix[state_index, action] = update
 
             average_return = (sum(average_returns)+sum_rewards)/(i+1)
             average_returns.append(average_return)
@@ -427,7 +450,7 @@ class Custom_RLTask_Learning_MC(AbstractRLTask):
         return average_returns
 
 
-    def visualize_episode(self, max_number_steps = None):
+    def visualize_episode(self, max_number_steps = None,save_im=False):
         """
         This function executes and plot an episode (or a fixed number 'max_number_steps' steps).
         You may want to disable some agent behaviours when visualizing(e.g. self.agent.learning = False)
@@ -438,13 +461,14 @@ class Custom_RLTask_Learning_MC(AbstractRLTask):
         self.agent.learning = False
         curr_reward=0
         timestep=0
-        self.env.reset()
+        state = self.env.reset()
         sum_rewards=0
+        curr_state = get_crop_chars_from_observation(state)
         while True:
-            if not self.useDoulbeEnv:
-                curr_state = get_crop_chars_from_observation(self.env._get_observation(self.env.last_observation))
-            else:
-                curr_state = get_crop_chars_from_observation(self.env.env._get_observation(self.env.last_observation))
+            # if not self.useDoulbeEnv:
+            #     curr_state = get_crop_chars_from_observation(self.env._get_observation(self.env.last_observation))
+            # else:
+            #     curr_state = get_crop_chars_from_observation(self.env.env._get_observation(self.env.last_observation))
 
             # let agent choose action
             action = self.agent.act(curr_state, curr_reward, self.Qmatrix, self.states_list)
@@ -455,12 +479,17 @@ class Custom_RLTask_Learning_MC(AbstractRLTask):
             timestep+=1
 
             sum_rewards+=reward
+            curr_state = get_crop_chars_from_observation(observation)
             # self.env.render(action, reward)
             # print("Initial state", commons.get_crop_chars_from_observation(state))
-            if not self.useDoulbeEnv:
-                plt.imshow(get_crop_pixel_from_observation(self.env._get_observation(self.env.last_observation)))
-            else:
-                plt.imshow(get_crop_pixel_from_observation(self.env._get_observation(self.env.last_observation)))
+            plt.imshow(get_crop_pixel_from_observation(observation))
+
+            # if not self.useDoulbeEnv:
+            #     plt.imshow(get_crop_pixel_from_observation(self.env._get_observation(self.env.last_observation)))
+            # else:
+            #     plt.imshow(get_crop_pixel_from_observation(self.env.env._get_observation(self.env.last_observation)))
+            if save_im:
+                plt.savefig("experiment_results2/step"+str(timestep)+"MC_cliff.png")
 
             plt.show()
 

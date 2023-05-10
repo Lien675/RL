@@ -120,44 +120,82 @@ import commons
 # id = me.ROOM_WITH_LAVA
 # id = me.EMPTY_ROOM
 # id = me.CLIFF
-id = me.ROOM_WITH_MONSTER
-
-epsilons = [0.1,0.2,0.3,0.5,0.8,1]
-plt.figure()
-results = []
-for eps in epsilons:
-    empty_room_env = me.get_minihack_envirnment(id, add_pixel=True)
-    state = empty_room_env.reset()
-    # epsilon=0.3
-
-    agent2 = commons.MonteCarloAgent('mca',empty_room_env.action_space,eps)
-    # off_task = commons.Custom_RLTask_Learning_TD_OffPolicy(empty_room_env,agent2,alpha=LR,discount_factor=0.9,roomID=id)
-    on_ltask = commons.Custom_RLTask_Learning_TD_OnPolicy(empty_room_env, agent2,alpha=0.5, discount_factor=0.9,roomID=id)
-
-    av_returns_mc = on_ltask.interact(200)
-    results.append(av_returns_mc)
-    on_ltask.visualize_episode(max_number_steps=30)
-
-plt.plot(results[0], label= "LR "+str(epsilons[0]))
-plt.plot(results[1], label= "LR "+str(epsilons[1]))
-plt.plot(results[2], label= "LR "+str(epsilons[2]))
-plt.plot(results[3], label= "LR "+str(epsilons[3]))
-plt.plot(results[4], label= "LR "+str(epsilons[4]))
-plt.plot(results[5], label= "LR "+str(epsilons[5]))
-
-plt.title("average returns")
-plt.legend()
-plt.savefig("OnPolicy_epsilonTest_roomWithMonster.png")
-plt.show()
+# id = me.ROOM_WITH_MONSTER
+#
+# epsilons = [0.1,0.2,0.3,0.5,0.8,1]
+# plt.figure()
+# results = []
+# for eps in epsilons:
+#     empty_room_env = me.get_minihack_envirnment(id, add_pixel=True)
+#     state = empty_room_env.reset()
+#     # epsilon=0.3
+#
+#     agent2 = commons.MonteCarloAgent('mca',empty_room_env.action_space,eps)
+#     # off_task = commons.Custom_RLTask_Learning_TD_OffPolicy(empty_room_env,agent2,alpha=LR,discount_factor=0.9,roomID=id)
+#     on_ltask = commons.Custom_RLTask_Learning_TD_OnPolicy(empty_room_env, agent2,alpha=0.5, discount_factor=0.9,roomID=id)
+#
+#     av_returns_mc = on_ltask.interact(200)
+#     results.append(av_returns_mc)
+#     on_ltask.visualize_episode(max_number_steps=30)
+#
+# plt.plot(results[0], label= "LR "+str(epsilons[0]))
+# plt.plot(results[1], label= "LR "+str(epsilons[1]))
+# plt.plot(results[2], label= "LR "+str(epsilons[2]))
+# plt.plot(results[3], label= "LR "+str(epsilons[3]))
+# plt.plot(results[4], label= "LR "+str(epsilons[4]))
+# plt.plot(results[5], label= "LR "+str(epsilons[5]))
+#
+# plt.title("average returns")
+# plt.legend()
+# plt.savefig("OnPolicy_epsilonTest_roomWithMonster.png")
+# plt.show()
 
 #task 2.2
-# # id = me.ROOM_WITH_MONSTER
-# # id = me.ROOM_WITH_LAVA
-# id = me.EMPTY_ROOM
-# # id = me.CLIFF
-# # id=me.ROOM_WITH_LAVA_MODIFIED
+id = me.CLIFF
+empty_room_env = me.get_minihack_envirnment(id, add_pixel=False)
+state = empty_room_env.reset()
+eps=0.3
+agent = commons.MonteCarloAgent('mca',empty_room_env.action_space,eps)
+mc_ltask = commons.Custom_RLTask_Learning_MC(empty_room_env, agent, roomID=id, discountF=0.9)
+av_returns_mc = mc_ltask.interact(2000)
+
+empty_room_env = me.get_minihack_envirnment(id, add_pixel=True)
+state = empty_room_env.reset()
+mc_ltask2 = commons.Custom_RLTask_Learning_MC(empty_room_env, agent, roomID=id, discountF=0.9, Qvalues = mc_ltask.Qmatrix)
+
+mc_ltask2.visualize_episode(max_number_steps=30,save_im=True)
+
+#task 2.3
+# id = me.ROOM_WITH_LAVA
+# id2 = me.ROOM_WITH_LAVA_MODIFIED
+#
 # empty_room_env = me.get_minihack_envirnment(id, add_pixel=True)
 # state = empty_room_env.reset()
+#
+# eps=0.2
+# agent = commons.MonteCarloAgent('mca',empty_room_env.action_space,eps)
+#
+# mc_ltask = commons.Custom_RLTask_Learning_MC(empty_room_env, agent, roomID=id, discountF=0.9)
+# av_returns_mc = mc_ltask.interact(500)
+# mc_ltask.visualize_episode(max_number_steps=30,save_im=True)
+#
+#
+# state = empty_room_env.reset()
+# agent = commons.MonteCarloAgent('mca',empty_room_env.action_space,eps)
+# off_task = commons.Custom_RLTask_Learning_TD_OffPolicy(empty_room_env,agent,alpha=0.5,discount_factor=0.9,roomID=id)
+# av_returns_off = off_task.interact(500)
+# off_task.visualize_episode(max_number_steps=30,save_im=True)
+#
+# state = empty_room_env.reset()
+# agent = commons.MonteCarloAgent('mca',empty_room_env.action_space,eps)
+# on_ltask = commons.Custom_RLTask_Learning_TD_OnPolicy(empty_room_env, agent,alpha=0.5, discount_factor=0.9,roomID=id)
+# av_returns_on = on_ltask.interact(500)
+# on_ltask.visualize_episode(max_number_steps=30,save_im=True)
+
+
+
+
+
 
 #works for MC empty room: epsilon=0.3, episodes=300
 # works for Onpolicy empty room: epsilon=0.3, episodes=300
