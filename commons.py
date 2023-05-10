@@ -798,7 +798,7 @@ class Custom_RLTask_Learning_TD_OffPolicy(AbstractRLTask):
 
 
 class Custom_RLTask_Learning_TD_OffPolicy_Dyna(AbstractRLTask):
-    def __init__(self, env, agent,alpha,discount_factor,roomID):
+    def __init__(self, env, agent,alpha,discount_factor,roomID, Qvalues=None):
         super().__init__(env, agent)
         action_count = self.env.action_space.n
 
@@ -822,7 +822,9 @@ class Custom_RLTask_Learning_TD_OffPolicy_Dyna(AbstractRLTask):
         self.discountF = discount_factor
 
         self.actionNumber = env.action_space.n
-        self.Qmatrix = np.zeros((env_width*env_height, self.actionNumber))
+        if Qvalues is None:
+            self.Qmatrix = np.zeros((env_width*env_height, self.actionNumber))
+        else: self.Qmatrix=Qvalues
 
         self.n = 10 #planning_steps
         self.model = {}
@@ -839,23 +841,21 @@ class Custom_RLTask_Learning_TD_OffPolicy_Dyna(AbstractRLTask):
 
         # rewards = 0
         for i in range(n_episodes):
-            self.env.reset()
-
+            state = self.env.reset()
+            curr_state = copy.deepcopy(get_crop_chars_from_observation(state))
             sum_rewards = 0 # = G = return
             curr_reward=0
 
             episodes=[]
             while True:
-                if not self.useDoulbeEnv:
-                    curr_state =copy.deepcopy(get_crop_chars_from_observation(self.env._get_observation(self.env.last_observation)))
-                else:
-                    curr_state = copy.deepcopy(
-                        get_crop_chars_from_observation(self.env.env._get_observation(self.env.last_observation)))
-
-
+                # if not self.useDoulbeEnv:
+                #     curr_state =copy.deepcopy(get_crop_chars_from_observation(self.env._get_observation(self.env.last_observation)))
+                # else:
+                #     curr_state = copy.deepcopy(
+                #         get_crop_chars_from_observation(self.env.env._get_observation(self.env.last_observation)))
                 action = self.agent.act(curr_state, curr_reward, self.Qmatrix, self.states_list)
 
-                self.state_actions.append((curr_state,action))
+                self.state_actions.append((curr_state,action)) #used????
 
                 # perform action on env and see results and
                 next_observation, reward, terminated, info = self.env.step(action) #take action, observe R and S'
@@ -874,17 +874,15 @@ class Custom_RLTask_Learning_TD_OffPolicy_Dyna(AbstractRLTask):
                 state_index = self.states_list.index((user_row, user_col))
                 Q = self.Qmatrix[state_index, action]
 
-
-                # max_Q_next = max( [row[next_state_index] for row in self.Qs] )
                 term = reward + self.discountF*max_Q_next - Q
 
                 self.Qmatrix[state_index, action]  =  Q+ self.alpha*term
-                # self.Qs[action][state_index] =  Q+ self.alpha*term
 
                 #update model:
                 if state_index not in self.model.keys():
                     self.model[state_index]={}
-                self.model[state_index]= (reward, next_state_index)
+                self.model[state_index][action]= (reward, next_state_index)
+                curr_state=copy.deepcopy(next_state)
 
 
                 #loop n times tu do random updates to Q values:
@@ -892,14 +890,14 @@ class Custom_RLTask_Learning_TD_OffPolicy_Dyna(AbstractRLTask):
                 for ni in range(self.n):
                     random_index = np.random.choice(range(len(self.model.keys())))
                     random_state = list(self.model)[random_index]
-                    random_index2 = np.random.choice(range(len(self.model[state].keys())))
-                    random_action = list(self.model[state])[random_index2]
+                    temp = len(self.model[random_state].keys())
+                    random_index2 = np.random.choice(range(temp))
+                    random_action = list(self.model[random_state])[random_index2]
                     rand_reward, rand_newstate = self.model[random_state][random_action]
 
                     max_Q_next = np.max(self.Qmatrix[rand_newstate, :])
 
                     self.Qmatrix[random_state][random_action]+= self.alpha*(rand_reward +max_Q_next-self.Qmatrix[random_state][random_action])
-
 
 
                 if terminated:
@@ -914,7 +912,7 @@ class Custom_RLTask_Learning_TD_OffPolicy_Dyna(AbstractRLTask):
         return average_returns
 
 
-    def visualize_episode(self, max_number_steps = None):
+    def visualize_episode(self, max_number_steps = None,save_im=False):
         """
         This function executes and plot an episode (or a fixed number 'max_number_steps' steps).
         You may want to disable some agent behaviours when visualizing(e.g. self.agent.learning = False)
@@ -948,6 +946,8 @@ class Custom_RLTask_Learning_TD_OffPolicy_Dyna(AbstractRLTask):
                 plt.imshow(get_crop_pixel_from_observation(self.env._get_observation(self.env.last_observation)))
             else:
                 plt.imshow(get_crop_pixel_from_observation(self.env.env._get_observation(self.env.last_observation)))
+            if save_im:
+                plt.savefig("dynaQ/step"+str(timestep)+"dynaQ"+str(self.roomid)+".png")
 
             plt.show()
 
