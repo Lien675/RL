@@ -213,36 +213,66 @@ id_lava_mod = me.ROOM_WITH_LAVA_MODIFIED
 # plt.show()
 
 #experiment: different LRs:
+# id = id_lava
+# num_episodes = 600
+# epsilon=0.3
+# gamma=0.9
+# alpha = 0.5
+# repeat=3
+# LRs=[0.1,0.3,0.5,0.8,1]
+# results= []
+# for LR in LRs:
+#     off_returns = []
+#     for _ in range(repeat):
+#         returns_off = run_OffPolicy(id,num_episodes,epsilon,LR, gamma)
+#         off_returns.append(returns_off)
+#     off_returns = np.array(off_returns)
+#     av_returns_off = np.mean(off_returns,axis=0)
+#     results.append(av_returns_off)
+#
+# plt.plot(results[0], label= "LR "+str(LRs[0]))
+# plt.plot(results[1], label= "LR "+str(LRs[1]))
+# plt.plot(results[2], label= "LR "+str(LRs[2]))
+# plt.plot(results[3], label= "LR "+str(LRs[3]))
+# plt.plot(results[4], label= "LR "+str(LRs[4]))
+# # plt.plot(av_returns_off, label= "TD Off Policy")
+# plt.title("average returns LR tests"+id+"( epsilon="+str(epsilon)+", gamma="+str(gamma)+")")
+# plt.legend()
+# plt.xlabel("episodes")
+# plt.ylabel("return")
+# plt.savefig("offPol_LRtest_"+id+"2.png")
+# plt.show()
+
+#experiment with different epsilon
 id = id_lava
 num_episodes = 600
-epsilon=0.3
+# epsilon=0.3
 gamma=0.9
 alpha = 0.5
 repeat=3
-LRs=[0.1,0.3,0.5,0.8,1]
+epsilons=[0.1,0.2,0.5,0.8,1]
 results= []
-for LR in LRs:
+for epsilon in epsilons:
     off_returns = []
     for _ in range(repeat):
-        returns_off = run_OffPolicy(id,num_episodes,epsilon,LR, gamma)
+        returns_off = run_OffPolicy(id,num_episodes,epsilon,alpha, gamma)
         off_returns.append(returns_off)
     off_returns = np.array(off_returns)
     av_returns_off = np.mean(off_returns,axis=0)
     results.append(av_returns_off)
 
-plt.plot(results[0], label= "LR "+str(LRs[0]))
-plt.plot(results[1], label= "LR "+str(LRs[1]))
-plt.plot(results[2], label= "LR "+str(LRs[2]))
-plt.plot(results[3], label= "LR "+str(LRs[3]))
-plt.plot(results[4], label= "LR "+str(LRs[4]))
+plt.plot(results[0], label= "epsilon "+str(epsilons[0]))
+plt.plot(results[1], label= "epsilon "+str(epsilons[1]))
+plt.plot(results[2], label= "epsilon "+str(epsilons[2]))
+plt.plot(results[3], label= "epsilon "+str(epsilons[3]))
+plt.plot(results[4], label= "epsilon "+str(epsilons[4]))
 # plt.plot(av_returns_off, label= "TD Off Policy")
-plt.title("average returns LR tests"+id+"( epsilon="+str(epsilon)+", gamma="+str(gamma)+")")
+plt.title("Off Policy average returns epsilon tests"+id+"( alpha="+str(alpha)+", gamma="+str(gamma)+")")
 plt.legend()
 plt.xlabel("episodes")
 plt.ylabel("return")
-plt.savefig("offPol_LRtest_"+id+"2.png")
+plt.savefig("offPol_Epstest_"+id+".png")
 plt.show()
-
 
 
 # id = me.ROOM_WITH_LAVA
