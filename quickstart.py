@@ -35,15 +35,15 @@ import commons
 
 
 #Task 1.1
-env=commons.Custom_GridEnv(size=(5,5))
-randagent = commons.Custom_RandomAgent("random_agent",action_space=env.action_space)
-rltask = commons.Custom_RLTask(env, randagent)
-av_returns = rltask.interact(10000)
-print(av_returns)
-plt.plot(av_returns)
-plt.title("average returns")
-plt.savefig('avg_return_task1.12.png')
-plt.show()
+# env=commons.Custom_GridEnv(size=(5,5))
+# randagent = commons.Custom_RandomAgent("random_agent",action_space=env.action_space)
+# rltask = commons.Custom_RLTask(env, randagent)
+# av_returns = rltask.interact(10000)
+# print(av_returns)
+# plt.plot(av_returns)
+# plt.title("average returns")
+# plt.savefig('avg_return_task1.12.png')
+# plt.show()
 
 # rltask.visualize_episode(max_number_steps=10,saveFig=False)
 
@@ -86,42 +86,42 @@ plt.show()
 
 #Taks 2.1
 #experiment TD on VS off and TD on VS MC
-# # id = me.ROOM_WITH_LAVA
-# id = me.EMPTY_ROOM
-# # id = me.CLIFF
-#
-# empty_room_env = me.get_minihack_envirnment(id, add_pixel=False)
-# state = empty_room_env.reset()
-# epsilon=0.2
-# agent = commons.MonteCarloAgent('mca',empty_room_env.action_space,epsilon)
-# mc_ltask = commons.Custom_RLTask_Learning_MC(empty_room_env, agent, roomID=id, discountF=0.9)
-# av_returns_mc = mc_ltask.interact(100)
-#
-# empty_room_env = me.get_minihack_envirnment(id, add_pixel=True)
-# empty_room_env.reset()
-# mc_ltask2 = commons.Custom_RLTask_Learning_MC(empty_room_env, agent, roomID=id, discountF=0.9,Qvalues = mc_ltask.Qmatrix)
-# mc_ltask2.visualize_episode(max_number_steps=30)
-#
-#
-#
-# empty_room_env2= me.get_minihack_envirnment(id, add_pixel=False)
-# state = empty_room_env2.reset()
-# agent2 = commons.MonteCarloAgent('mca',empty_room_env2.action_space,epsilon)
-# off_task = commons.Custom_RLTask_Learning_TD_OnPolicy(empty_room_env2,agent2,alpha=0.5,discount_factor=0.9,roomID=id)
-# av_returns_off = off_task.interact(100)
-#
-# empty_room_env = me.get_minihack_envirnment(id, add_pixel=True)
-# empty_room_env.reset()
-# off_task2 = commons.Custom_RLTask_Learning_TD_OnPolicy(empty_room_env,agent2,alpha=0.5,discount_factor=0.9,roomID=id,Qvalues = mc_ltask.Qmatrix)
-# off_task2.visualize_episode(max_number_steps=30,save_im=False)
-#
-#
-# plt.plot(av_returns_mc, label= "MC")
-# plt.plot(av_returns_off, label= "TD On Policy")
-# plt.title("average returns")
-# plt.legend()
-# plt.savefig("OnPolicy_VS_MC_empty2.png")
-# plt.show()
+# id = me.ROOM_WITH_LAVA
+id = me.EMPTY_ROOM
+# id = me.CLIFF
+
+empty_room_env = me.get_minihack_envirnment(id, add_pixel=False)
+state = empty_room_env.reset()
+epsilon=0.2
+agent = commons.MonteCarloAgent('mca',empty_room_env.action_space,epsilon)
+mc_ltask = commons.Custom_RLTask_Learning_MC(empty_room_env, agent, roomID=id, discountF=0.9)
+av_returns_mc = mc_ltask.interact(100)
+
+empty_room_env = me.get_minihack_envirnment(id, add_pixel=True)
+empty_room_env.reset()
+mc_ltask2 = commons.Custom_RLTask_Learning_MC(empty_room_env, agent, roomID=id, discountF=0.9,Qvalues = mc_ltask.Qmatrix)
+mc_ltask2.visualize_episode(max_number_steps=30)
+
+
+
+empty_room_env2= me.get_minihack_envirnment(id, add_pixel=False)
+state = empty_room_env2.reset()
+agent2 = commons.MonteCarloAgent('mca',empty_room_env2.action_space,epsilon)
+off_task = commons.Custom_RLTask_Learning_TD_OnPolicy(empty_room_env2,agent2,alpha=0.5,discount_factor=0.9,roomID=id)
+av_returns_off = off_task.interact(100)
+
+empty_room_env = me.get_minihack_envirnment(id, add_pixel=True)
+empty_room_env.reset()
+off_task2 = commons.Custom_RLTask_Learning_TD_OnPolicy(empty_room_env,agent2,alpha=0.5,discount_factor=0.9,roomID=id,Qvalues = mc_ltask.Qmatrix)
+off_task2.visualize_episode(max_number_steps=30,save_im=False)
+
+
+plt.plot(av_returns_mc, label= "MC")
+plt.plot(av_returns_off, label= "TD On Policy")
+plt.title("average returns")
+plt.legend()
+plt.savefig("OnPolicy_VS_MC_empty4.png")
+plt.show()
 
 #experiment: different LRs:
 # id = me.ROOM_WITH_LAVA
