@@ -489,7 +489,7 @@ class Custom_RLTask_Learning_MC(AbstractRLTask):
             # else:
             #     plt.imshow(get_crop_pixel_from_observation(self.env.env._get_observation(self.env.last_observation)))
             if save_im:
-                plt.savefig("experiment_results2/step"+str(timestep)+"MC_cliff.png")
+                plt.savefig("experiment_results3/step"+str(timestep)+"MC_"+str(self.roomid)+".png")
 
             plt.show()
 
@@ -498,7 +498,7 @@ class Custom_RLTask_Learning_MC(AbstractRLTask):
                 break
 
 class Custom_RLTask_Learning_TD_OnPolicy(AbstractRLTask):
-    def __init__(self, env, agent,alpha,discount_factor,roomID):
+    def __init__(self, env, agent,alpha,discount_factor,roomID, Qvalues=None):
         super().__init__(env, agent)
         self.agent.learning=True
         action_count = self.env.action_space.n
@@ -521,7 +521,11 @@ class Custom_RLTask_Learning_TD_OnPolicy(AbstractRLTask):
         self.discountF = discount_factor #gamma
 
         self.actionNumber = env.action_space.n
-        self.Qmatrix = np.zeros((env_width*env_height, self.actionNumber))
+
+        if Qvalues is None:
+
+            self.Qmatrix = np.zeros((env_width*env_height, self.actionNumber))
+        else: self.Qmatrix=Qvalues
 
 
     def interact(self, n_episodes):
@@ -639,25 +643,26 @@ class Custom_RLTask_Learning_TD_OnPolicy(AbstractRLTask):
             # perform action on env and see results and
             observation, reward, terminated, info = self.env.step(action)
             curr_reward = reward
-            timestep+=1
 
             sum_rewards+=reward
-            curr_state = get_crop_chars_from_observation(observation)
+            next_state = get_crop_chars_from_observation(observation)
             # self.env.render(action, reward)
             # print("Initial state", commons.get_crop_chars_from_observation(state))
+            print(curr_state)
             plt.imshow(get_crop_pixel_from_observation(observation))
             if save_im:
-                plt.savefig("experiment_results/step"+str(timestep)+"_OnPolicy_cliff.png")
+                plt.savefig("OnPol/step"+str(timestep)+"_OnPolicy_"+str(self.roomid)+"2.png")
 
             plt.show()
-
+            curr_state=next_state
+            timestep+=1
             if terminated or (max_number_steps!=None and timestep==max_number_steps):
                 print("episode terminated with a reward of "+str(sum_rewards))
                 break
 
 
 class Custom_RLTask_Learning_TD_OffPolicy(AbstractRLTask):
-    def __init__(self, env, agent,alpha,discount_factor,roomID):
+    def __init__(self, env, agent,alpha,discount_factor,roomID,Qvalues=None):
         super().__init__(env, agent)
         action_count = self.env.action_space.n
 
@@ -681,7 +686,9 @@ class Custom_RLTask_Learning_TD_OffPolicy(AbstractRLTask):
         self.discountF = discount_factor
 
         self.actionNumber = env.action_space.n
-        self.Qmatrix = np.zeros((env_width*env_height, self.actionNumber))
+        if Qvalues is None:
+            self.Qmatrix = np.zeros((env_width*env_height, self.actionNumber))
+        else: self.Qmatrix=Qvalues
 
     def interact(self, n_episodes):
         """
@@ -781,7 +788,7 @@ class Custom_RLTask_Learning_TD_OffPolicy(AbstractRLTask):
             else:
                 plt.imshow(get_crop_pixel_from_observation(self.env.env._get_observation(self.env.last_observation)))
             if save_im:
-                plt.savefig("experiment_results/step"+str(timestep)+"_OffPolicy_cliff.png")
+                plt.savefig("experiment_results/step"+str(timestep)+"_OffPolicy_"+str(self.roomid)+".png")
 
             plt.show()
 

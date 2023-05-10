@@ -151,35 +151,54 @@ import commons
 # plt.show()
 
 #task 2.2
-id = me.CLIFF
-empty_room_env = me.get_minihack_envirnment(id, add_pixel=False)
-state = empty_room_env.reset()
-eps=0.3
-agent = commons.MonteCarloAgent('mca',empty_room_env.action_space,eps)
-mc_ltask = commons.Custom_RLTask_Learning_MC(empty_room_env, agent, roomID=id, discountF=0.9)
-av_returns_mc = mc_ltask.interact(2000)
-
-empty_room_env = me.get_minihack_envirnment(id, add_pixel=True)
-state = empty_room_env.reset()
-mc_ltask2 = commons.Custom_RLTask_Learning_MC(empty_room_env, agent, roomID=id, discountF=0.9, Qvalues = mc_ltask.Qmatrix)
-
-mc_ltask2.visualize_episode(max_number_steps=30,save_im=True)
-
-#task 2.3
-# id = me.ROOM_WITH_LAVA
-# id2 = me.ROOM_WITH_LAVA_MODIFIED
+# id = me.CLIFF
+# empty_room_env = me.get_minihack_envirnment(id, add_pixel=False)
+# state = empty_room_env.reset()
+# eps=0.3
+# agent = commons.MonteCarloAgent('mca',empty_room_env.action_space,eps)
+# mc_ltask = commons.Custom_RLTask_Learning_MC(empty_room_env, agent, roomID=id, discountF=0.9)
+# av_returns_mc = mc_ltask.interact(2000)
 #
 # empty_room_env = me.get_minihack_envirnment(id, add_pixel=True)
 # state = empty_room_env.reset()
+# mc_ltask2 = commons.Custom_RLTask_Learning_MC(empty_room_env, agent, roomID=id, discountF=0.9, Qvalues = mc_ltask.Qmatrix)
 #
-# eps=0.2
-# agent = commons.MonteCarloAgent('mca',empty_room_env.action_space,eps)
-#
-# mc_ltask = commons.Custom_RLTask_Learning_MC(empty_room_env, agent, roomID=id, discountF=0.9)
-# av_returns_mc = mc_ltask.interact(500)
-# mc_ltask.visualize_episode(max_number_steps=30,save_im=True)
-#
-#
+# mc_ltask2.visualize_episode(max_number_steps=30,save_im=True)
+
+#task 2.3
+id = me.ROOM_WITH_LAVA
+id2 = me.ROOM_WITH_LAVA_MODIFIED
+
+empty_room_env = me.get_minihack_envirnment(id, add_pixel=False)
+state = empty_room_env.reset()
+
+eps=0.2
+agent = commons.MonteCarloAgent('mca',empty_room_env.action_space,eps)
+
+on_task = commons.Custom_RLTask_Learning_TD_OnPolicy(empty_room_env,agent,alpha=0.4,discount_factor=0.9,roomID=id)
+av_returns_mc = on_task.interact(500)
+empty_room_env = me.get_minihack_envirnment(id, add_pixel=True)
+state = empty_room_env.reset()
+on_task2 = commons.Custom_RLTask_Learning_TD_OnPolicy(empty_room_env,agent,alpha=0.4,discount_factor=0.9,roomID=id,Qvalues = on_task.Qmatrix)
+on_task2.visualize_episode(max_number_steps=30,save_im=True)
+
+
+
+
+empty_room_env = me.get_minihack_envirnment(id2, add_pixel=False)
+state = empty_room_env.reset()
+
+eps=0.2
+agent = commons.MonteCarloAgent('mca',empty_room_env.action_space,eps)
+
+on_task = commons.Custom_RLTask_Learning_TD_OnPolicy(empty_room_env,agent,alpha=0.1,discount_factor=0.9,roomID=id2)
+av_returns_mc = on_task.interact(300)
+empty_room_env = me.get_minihack_envirnment(id2, add_pixel=True)
+state = empty_room_env.reset()
+on_task2 = commons.Custom_RLTask_Learning_TD_OnPolicy(empty_room_env,agent,alpha=0.1,discount_factor=0.9,roomID=id2,Qvalues = on_task.Qmatrix)
+on_task2.visualize_episode(max_number_steps=30,save_im=True)
+
+
 # state = empty_room_env.reset()
 # agent = commons.MonteCarloAgent('mca',empty_room_env.action_space,eps)
 # off_task = commons.Custom_RLTask_Learning_TD_OffPolicy(empty_room_env,agent,alpha=0.5,discount_factor=0.9,roomID=id)
