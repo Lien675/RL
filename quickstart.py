@@ -185,8 +185,10 @@ alpha = 0.5
 repeat=5
 on_returns = []
 for _ in range(repeat):
-    returns_on = run_OnPolicy(id,num_episodes,epsilon,alpha, gamma)
-    on_returns.append(returns_on)
+    # returns_on = run_OnPolicy(id,num_episodes,epsilon,alpha, gamma)
+    av_returns_mc = run_MC(id, num_episodes,epsilon,gamma)
+
+    on_returns.append(av_returns_mc)
 on_returns = np.array(on_returns)
 av_returns_on = np.mean(on_returns,axis=0)
 
@@ -201,13 +203,13 @@ av_returns_off = np.mean(off_returns,axis=0)
 
 # plt.plot(av_returns_mc, label= "MC")
 print(av_returns_on)
-plt.plot(av_returns_on, label= "TD On Policy")
+plt.plot(av_returns_on, label= "MC")
 plt.plot(av_returns_off, label= "TD Off Policy")
 plt.title("average returns "+id+"( epsilon="+str(epsilon)+", gamma="+str(gamma)+", alpha="+str(alpha)+" )")
 plt.legend()
 plt.xlabel("episodes")
 plt.ylabel("return")
-plt.savefig("On_VS_off_"+id+".png")
+plt.savefig("MC_VS_offPol_"+id+".png")
 plt.show()
 
 #experiment: different LRs:
