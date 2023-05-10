@@ -363,7 +363,7 @@ class Custom_RLTask_Learning_MC(AbstractRLTask):
         :return: a list of episode avergae returns  (see assignment for a definition
         """
         average_returns = []
-
+        returns = []
 
         # rewards = 0
         for i in range(n_episodes):
@@ -442,7 +442,8 @@ class Custom_RLTask_Learning_MC(AbstractRLTask):
             #         # self.Qmatrix[state_index, action] = np.average(self.Returns[state_index][At])
             #         self.Qmatrix[state_index, action] = update
 
-            average_return = (sum(average_returns)+sum_rewards)/(i+1)
+            returns.append(sum_rewards)
+            average_return = sum(returns)/(i+1)
             average_returns.append(average_return)
             print(sum_rewards)
             print("episode "+str(i)+" done")
@@ -536,7 +537,7 @@ class Custom_RLTask_Learning_TD_OnPolicy(AbstractRLTask):
         :return: a list of episode avergae returns  (see assignment for a definition
         """
         average_returns = []
-
+        returns=[]
 
         # rewards = 0
         counter=0
@@ -609,7 +610,8 @@ class Custom_RLTask_Learning_TD_OnPolicy(AbstractRLTask):
 
 
 
-            average_return = (sum(average_returns)+sum_rewards)/(i+1)
+            returns.append(sum_rewards)
+            average_return = sum(returns)/(i+1)
             average_returns.append(average_return)
             print("episode "+str(i)+" done, sum rewards: "+str(sum_rewards))
             # counter+=1
@@ -698,7 +700,7 @@ class Custom_RLTask_Learning_TD_OffPolicy(AbstractRLTask):
         :return: a list of episode avergae returns  (see assignment for a definition
         """
         average_returns = []
-
+        returns=[]
 
         # rewards = 0
         for i in range(n_episodes):
@@ -745,7 +747,8 @@ class Custom_RLTask_Learning_TD_OffPolicy(AbstractRLTask):
                     break
 
 
-            average_return = (sum(average_returns)+sum_rewards)/(i+1)
+            returns.append(sum_rewards)
+            average_return = sum(returns)/(i+1)
             average_returns.append(average_return)
             print(sum_rewards)
             print("episode "+str(i)+" done")
@@ -837,7 +840,7 @@ class Custom_RLTask_Learning_TD_OffPolicy_Dyna(AbstractRLTask):
         :return: a list of episode avergae returns  (see assignment for a definition
         """
         average_returns = []
-
+        returns=[]
 
         # rewards = 0
         for i in range(n_episodes):
@@ -904,7 +907,8 @@ class Custom_RLTask_Learning_TD_OffPolicy_Dyna(AbstractRLTask):
                     break
 
 
-            average_return = (sum(average_returns)+sum_rewards)/(i+1)
+            returns.append(sum_rewards)
+            average_return = sum(returns)/(i+1)
             average_returns.append(average_return)
             print(sum_rewards)
             print("episode "+str(i)+" done")
@@ -991,7 +995,6 @@ class Custom_RLTask(AbstractRLTask):
                     break
             returns.append(sum_rewards)
             average_return = sum(returns)/(i+1)
-            # average_return = (sum(average_returns)+sum_rewards)/(i+1)
             average_returns.append(average_return)
             print("episode "+str(i)+" sum_rewards: "+str(sum_rewards))
 
