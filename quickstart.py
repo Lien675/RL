@@ -217,10 +217,10 @@ import commons
 
 #task 2.4
 # id = me.ROOM_WITH_LAVA
-id = me.EMPTY_ROOM
-# id = me.CLIFF
+# id = me.EMPTY_ROOM
+id = me.CLIFF
 # id = me.ROOM_WITH_MONSTER
-
+# id = me.ROOM_WITH_LAVA_MODIFIED
 empty_room_env = me.get_minihack_envirnment(id, add_pixel=False)
 state = empty_room_env.reset()
 
@@ -228,17 +228,17 @@ eps=0.2
 agent = commons.MonteCarloAgent('mca',empty_room_env.action_space,eps)
 
 task1 = commons.Custom_RLTask_Learning_TD_OffPolicy_Dyna(empty_room_env,agent,alpha=0.4,discount_factor=0.9,roomID=id)
-av_returns_Q = task1.interact(100)
+av_returns_Q = task1.interact(400)
 empty_room_env = me.get_minihack_envirnment(id, add_pixel=True)
 state = empty_room_env.reset()
 task12 = commons.Custom_RLTask_Learning_TD_OffPolicy_Dyna(empty_room_env,agent,alpha=0.4,discount_factor=0.9,roomID=id,Qvalues = task1.Qmatrix)
 task12.visualize_episode(max_number_steps=30,save_im=False)
 
 
-
+empty_room_env = me.get_minihack_envirnment(id, add_pixel=False)
 state = empty_room_env.reset()
 task2 = commons.Custom_RLTask_Learning_TD_OffPolicy(empty_room_env,agent,alpha=0.4,discount_factor=0.9,roomID=id)
-av_returns_Qdyna = task2.interact(100)
+av_returns_Qdyna = task2.interact(400)
 empty_room_env = me.get_minihack_envirnment(id, add_pixel=True)
 state = empty_room_env.reset()
 task22 = commons.Custom_RLTask_Learning_TD_OffPolicy(empty_room_env,agent,alpha=0.4,discount_factor=0.9,roomID=id,Qvalues = task2.Qmatrix)
