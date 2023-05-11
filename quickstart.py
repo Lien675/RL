@@ -297,9 +297,9 @@ id_lava_mod = me.ROOM_WITH_LAVA_MODIFIED
 
 
 
-id = id_lava
-# id = id_lava_mod
-num_episodes = 500
+# id = id_lava
+id = id_lava_mod
+num_episodes = 300
 epsilon=0.2
 gamma=0.9
 alpha = 0.3
@@ -309,8 +309,8 @@ avg_returns = []
 eps_returns = []
 for _ in range(repeat):
     # returns_on,eps_reward = run_OffPolicy(id,num_episodes,epsilon,alpha, gamma,run_steps=True,plot_steps=False)
-    returns_on,eps_reward = run_dyna_OffPolicy(id,num_episodes,epsilon,alpha, gamma,run_steps=True,plot_steps=False)
-    # returns_on,eps_reward = run_OnPolicy(id,num_episodes,epsilon,alpha, gamma,run_steps=True,plot_steps=False)
+    # returns_on,eps_reward = run_dyna_OffPolicy(id,num_episodes,epsilon,alpha, gamma,run_steps=True,plot_steps=False)
+    returns_on,eps_reward = run_OnPolicy(id,num_episodes,epsilon,alpha, gamma,run_steps=True,plot_steps=False)
     # av_returns_mc, eps_reward = run_MC(id, num_episodes,epsilon,gamma,run_steps=True,plot_steps=False)
 
     avg_returns.append(returns_on)
@@ -320,7 +320,7 @@ avg_returns = np.array(avg_returns)
 avg_returns = np.mean(avg_returns,axis=0)
 
 fig, (ax1, ax2) = plt.subplots(1,2)
-fig.suptitle("Dyna-off pol"+id+"( alpha="+str(alpha)+", gamma="+str(gamma)+", epsilon="+str(epsilon)+")")
+fig.suptitle("On pol"+id+"( alpha="+str(alpha)+", gamma="+str(gamma)+", epsilon="+str(epsilon)+")")
 ax1.plot(avg_returns)
 ax1.set_title("average returns")
 ax1.set_xlabel("episodes")
@@ -330,7 +330,7 @@ ax2.set_title("episode returns")
 ax2.set_xlabel("different runs")
 ax2.set_ylabel("returns")
 
-fig.savefig('task2.3/dyna_offPol_'+str(id)+"4.png")
+fig.savefig('task2.3/onPoll_'+str(id)+"2.png")
 
 
 #task 2.4
