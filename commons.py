@@ -451,13 +451,14 @@ class Custom_RLTask_Learning_MC(AbstractRLTask):
         return average_returns
 
 
-    def visualize_episode(self, max_number_steps = None,save_im=False):
+    def visualize_episode(self, max_number_steps = None,save_im=False,plot_steps=True):
         """
         This function executes and plot an episode (or a fixed number 'max_number_steps' steps).
         You may want to disable some agent behaviours when visualizing(e.g. self.agent.learning = False)
         :param max_number_steps: Optional, maximum number of steps to plot.
         :return:
         """
+        print(self.Qmatrix)
 
         self.agent.learning = False
         curr_reward=0
@@ -481,22 +482,19 @@ class Custom_RLTask_Learning_MC(AbstractRLTask):
 
             sum_rewards+=reward
             curr_state = get_crop_chars_from_observation(observation)
-            # self.env.render(action, reward)
-            # print("Initial state", commons.get_crop_chars_from_observation(state))
-            plt.imshow(get_crop_pixel_from_observation(observation))
+            if plot_steps:
+                plt.imshow(get_crop_pixel_from_observation(observation))
 
-            # if not self.useDoulbeEnv:
-            #     plt.imshow(get_crop_pixel_from_observation(self.env._get_observation(self.env.last_observation)))
-            # else:
-            #     plt.imshow(get_crop_pixel_from_observation(self.env.env._get_observation(self.env.last_observation)))
-            if save_im:
-                plt.savefig("experiment_results3/step"+str(timestep)+"MC_"+str(self.roomid)+".png")
+                if save_im:
+                    plt.savefig("experiment_results3/step"+str(timestep)+"MC_"+str(self.roomid)+".png")
 
-            plt.show()
+                plt.show()
 
             if terminated or (max_number_steps!=None and timestep==max_number_steps):
                 print("episode terminated with a reward of "+str(sum_rewards))
                 break
+
+        return sum_rewards
 
 class Custom_RLTask_Learning_TD_OnPolicy(AbstractRLTask):
     def __init__(self, env, agent,alpha,discount_factor,roomID, Qvalues=None):
@@ -623,7 +621,7 @@ class Custom_RLTask_Learning_TD_OnPolicy(AbstractRLTask):
         return average_returns
 
 
-    def visualize_episode(self, max_number_steps = None,save_im=False):
+    def visualize_episode(self, max_number_steps = None,save_im=False,plot_steps=True):
         """
         This function executes and plot an episode (or a fixed number 'max_number_steps' steps).
         You may want to disable some agent behaviours when visualizing(e.g. self.agent.learning = False)
@@ -648,20 +646,19 @@ class Custom_RLTask_Learning_TD_OnPolicy(AbstractRLTask):
 
             sum_rewards+=reward
             next_state = get_crop_chars_from_observation(observation)
-            # self.env.render(action, reward)
-            # print("Initial state", commons.get_crop_chars_from_observation(state))
-            print(curr_state)
-            plt.imshow(get_crop_pixel_from_observation(observation))
-            if save_im:
-                plt.savefig("OnPol2/step"+str(timestep)+"_OnPolicy_"+str(self.roomid)+"2.png")
 
-            plt.show()
+            if plot_steps:
+                plt.imshow(get_crop_pixel_from_observation(observation))
+                if save_im:
+                    plt.savefig("OnPol2/step"+str(timestep)+"_OnPolicy_"+str(self.roomid)+"2.png")
+                plt.show()
             curr_state=next_state
             timestep+=1
             if terminated or (max_number_steps!=None and timestep==max_number_steps):
                 print("episode terminated with a reward of "+str(sum_rewards))
                 break
 
+        return sum_rewards
 
 class Custom_RLTask_Learning_TD_OffPolicy(AbstractRLTask):
     def __init__(self, env, agent,alpha,discount_factor,roomID,Qvalues=None):
@@ -756,7 +753,7 @@ class Custom_RLTask_Learning_TD_OffPolicy(AbstractRLTask):
         return average_returns
 
 
-    def visualize_episode(self, max_number_steps = None,save_im=False):
+    def visualize_episode(self, max_number_steps = None,save_im=False,plot_steps=True):
         """
         This function executes and plot an episode (or a fixed number 'max_number_steps' steps).
         You may want to disable some agent behaviours when visualizing(e.g. self.agent.learning = False)
@@ -767,14 +764,10 @@ class Custom_RLTask_Learning_TD_OffPolicy(AbstractRLTask):
         self.agent.learning = False
         curr_reward=0
         timestep=0
-        self.env.reset()
+        state = self.env.reset()
+        curr_state = get_crop_chars_from_observation(state)
         sum_rewards=0
         while True:
-            if not self.useDoulbeEnv:
-                curr_state = get_crop_chars_from_observation(self.env._get_observation(self.env.last_observation))
-            else:
-                curr_state = get_crop_chars_from_observation(self.env.env._get_observation(self.env.last_observation))
-
             # let agent choose action
             action = self.agent.act(curr_state, curr_reward, self.Qmatrix, self.states_list)
 
@@ -784,20 +777,19 @@ class Custom_RLTask_Learning_TD_OffPolicy(AbstractRLTask):
             timestep+=1
 
             sum_rewards+=reward
-            # self.env.render(action, reward)
-            # print("Initial state", commons.get_crop_chars_from_observation(state))
-            if not self.useDoulbeEnv:
-                plt.imshow(get_crop_pixel_from_observation(self.env._get_observation(self.env.last_observation)))
-            else:
-                plt.imshow(get_crop_pixel_from_observation(self.env.env._get_observation(self.env.last_observation)))
-            if save_im:
-                plt.savefig("OffPol/step"+str(timestep)+"_OffPolicy_"+str(self.roomid)+".png")
 
-            plt.show()
+            if plot_steps:
+                plt.imshow(get_crop_pixel_from_observation(curr_state))
+                if save_im:
+                    plt.savefig("OffPol/step"+str(timestep)+"_OffPolicy_"+str(self.roomid)+".png")
+                plt.show()
+
+            curr_state = get_crop_chars_from_observation(observation)
 
             if terminated or (max_number_steps!=None and timestep==max_number_steps):
                 print("episode terminated with a reward of "+str(sum_rewards))
                 break
+        return sum_rewards
 
 
 class Custom_RLTask_Learning_TD_OffPolicy_Dyna(AbstractRLTask):
@@ -916,7 +908,7 @@ class Custom_RLTask_Learning_TD_OffPolicy_Dyna(AbstractRLTask):
         return average_returns
 
 
-    def visualize_episode(self, max_number_steps = None,save_im=False):
+    def visualize_episode(self, max_number_steps = None,save_im=False,plot_steps=False):
         """
         This function executes and plot an episode (or a fixed number 'max_number_steps' steps).
         You may want to disable some agent behaviours when visualizing(e.g. self.agent.learning = False)
@@ -927,14 +919,10 @@ class Custom_RLTask_Learning_TD_OffPolicy_Dyna(AbstractRLTask):
         self.agent.learning = False
         curr_reward=0
         timestep=0
-        self.env.reset()
+        state = self.env.reset()
+        curr_state = get_crop_chars_from_observation(state)
         sum_rewards=0
         while True:
-            if not self.useDoulbeEnv:
-                curr_state = get_crop_chars_from_observation(self.env._get_observation(self.env.last_observation))
-            else:
-                curr_state = get_crop_chars_from_observation(self.env.env._get_observation(self.env.last_observation))
-
             # let agent choose action
             action = self.agent.act(curr_state, curr_reward, self.Qmatrix, self.states_list)
 
@@ -946,18 +934,19 @@ class Custom_RLTask_Learning_TD_OffPolicy_Dyna(AbstractRLTask):
             sum_rewards+=reward
             # self.env.render(action, reward)
             # print("Initial state", commons.get_crop_chars_from_observation(state))
-            if not self.useDoulbeEnv:
-                plt.imshow(get_crop_pixel_from_observation(self.env._get_observation(self.env.last_observation)))
-            else:
-                plt.imshow(get_crop_pixel_from_observation(self.env.env._get_observation(self.env.last_observation)))
-            if save_im:
-                plt.savefig("dynaQ/step"+str(timestep)+"dynaQ"+str(self.roomid)+".png")
 
-            plt.show()
+            if plot_steps:
+                plt.imshow(get_crop_pixel_from_observation(observation))
+                if save_im:
+                    plt.savefig("dynaQ/step"+str(timestep)+"dynaQ"+str(self.roomid)+".png")
 
+                plt.show()
+
+            curr_state= get_crop_chars_from_observation(observation)
             if terminated or (max_number_steps!=None and timestep==max_number_steps):
                 print("episode terminated with a reward of "+str(sum_rewards))
                 break
+        return sum_rewards
 
 
 class Custom_RLTask(AbstractRLTask):
