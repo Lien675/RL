@@ -537,21 +537,15 @@ class Custom_RLTask_Learning_TD_OnPolicy(AbstractRLTask):
         average_returns = []
         returns=[]
 
-        # rewards = 0
-        counter=0
         for i in range(n_episodes):
-            if i==50:
-                x=2
+
             state = self.env.reset()
             curr_reward=0
             curr_state = copy.deepcopy(get_crop_chars_from_observation(state))
             action = self.agent.act(curr_state, curr_reward, self.Qmatrix, self.states_list)
 
             sum_rewards = 0 # = G = return
-            done=False
 
-            #generate episode:
-            episodes=[]
             terminated=False
             update_count = 0
             while True:
@@ -588,23 +582,10 @@ class Custom_RLTask_Learning_TD_OnPolicy(AbstractRLTask):
                     term = reward - self.Qmatrix[state_index,action]
                     self.Qmatrix[state_index,action]=self.Qmatrix[state_index,action] + self.alpha*term
                     break
-                #
-                # user_row, user_col = extract_user_location_from_state(curr_state)
-                # next_user_row, next_user_col = extract_user_location_from_state(next_state)
-                # state_index = self.states_list.index((user_row, user_col))
-                # next_state_index = self.states_list.index((next_user_row, next_user_col))
-                # Q = self.Qs[action][state_index]
-                # Qnext = self.Qs[next_action][next_state_index]
-                # term = reward + self.discountF*Qnext - Q
-                # self.Qs[action][state_index] =  Q+ self.alpha*term
 
-                done  = terminated
                 action = next_action
                 curr_state = copy.deepcopy(next_state)
                 update_count+=1
-                if terminated:
-                    xdd=2
-                    print(xdd)
 
 
 
@@ -706,7 +687,6 @@ class Custom_RLTask_Learning_TD_OffPolicy(AbstractRLTask):
             sum_rewards = 0 # = G = return
             curr_reward=0
 
-            episodes=[]
             while True:
                 if not self.useDoulbeEnv:
                     curr_state =copy.deepcopy(get_crop_chars_from_observation(self.env._get_observation(self.env.last_observation)))

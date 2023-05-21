@@ -196,24 +196,36 @@ id_lava_mod = me.ROOM_WITH_LAVA_MODIFIED
 
 #
 #
-# off_returns = []
-# for _ in range(repeat):
-#     returns_off = run_OffPolicy(id,num_episodes,epsilon,alpha, gamma)
-#     off_returns.append(returns_off)
-# off_returns = np.array(off_returns)
-# av_returns_off = np.mean(off_returns,axis=0)
-# # av_returns_mc = run_MC(id, num_episodes,epsilon,gamma)
-#
-# # plt.plot(av_returns_mc, label= "MC")
-# print(av_returns_on)
-# plt.plot(av_returns_on, label= "MC")
-# plt.plot(av_returns_off, label= "TD Off Policy")
-# plt.title("average returns "+id+"( epsilon="+str(epsilon)+", gamma="+str(gamma)+", alpha="+str(alpha)+" )")
-# plt.legend()
-# plt.xlabel("episodes")
-# plt.ylabel("return")
-# plt.savefig("MC_VS_offPol_"+id+".png")
-# plt.show()
+id=id_lava
+num_episodes = 500
+epsilon=0.3
+gamma=0.9
+alpha = 0.5
+repeat=3
+
+on_returns = []
+mc_returns=[]
+for _ in range(repeat):
+    returns_on = run_OnPolicy(id,num_episodes,epsilon,alpha, gamma)
+    returns_mc = run_MC(id, num_episodes, epsilon, gamma)
+
+    on_returns.append(returns_on)
+    mc_returns.append(returns_mc)
+
+on_returns = np.array(on_returns)
+av_on_returns = np.mean(on_returns,axis=0)
+mc_returns = np.array(mc_returns)
+av_mc_returns = np.mean(mc_returns,axis=0)
+
+# plt.plot(av_returns_mc, label= "MC")
+plt.plot(av_mc_returns, label= "MC")
+plt.plot(av_on_returns, label= "TD On Policy")
+plt.title("average returns "+id+"( epsilon="+str(epsilon)+", gamma="+str(gamma)+", alpha="+str(alpha)+" )")
+plt.legend()
+plt.xlabel("episodes")
+plt.ylabel("return")
+plt.savefig("21.05/MC_VS_OnPol_"+id+".png")
+plt.show()
 
 #experiment: different LRs:
 # id = id_lava
@@ -298,39 +310,39 @@ id_lava_mod = me.ROOM_WITH_LAVA_MODIFIED
 
 
 # id = id_lava
-id = id_lava_mod
-num_episodes = 300
-epsilon=0.2
-gamma=0.9
-alpha = 0.3
-
-repeat=10
-avg_returns = []
-eps_returns = []
-for _ in range(repeat):
-    # returns_on,eps_reward = run_OffPolicy(id,num_episodes,epsilon,alpha, gamma,run_steps=True,plot_steps=False)
-    # returns_on,eps_reward = run_dyna_OffPolicy(id,num_episodes,epsilon,alpha, gamma,run_steps=True,plot_steps=False)
-    returns_on,eps_reward = run_OnPolicy(id,num_episodes,epsilon,alpha, gamma,run_steps=True,plot_steps=False)
-    # av_returns_mc, eps_reward = run_MC(id, num_episodes,epsilon,gamma,run_steps=True,plot_steps=False)
-
-    avg_returns.append(returns_on)
-    eps_returns.append(eps_reward)
-
-avg_returns = np.array(avg_returns)
-avg_returns = np.mean(avg_returns,axis=0)
-
-fig, (ax1, ax2) = plt.subplots(1,2)
-fig.suptitle("On pol"+id+"( alpha="+str(alpha)+", gamma="+str(gamma)+", epsilon="+str(epsilon)+")")
-ax1.plot(avg_returns)
-ax1.set_title("average returns")
-ax1.set_xlabel("episodes")
-ax1.set_ylabel("average returns")
-ax2.plot(eps_returns)
-ax2.set_title("episode returns")
-ax2.set_xlabel("different runs")
-ax2.set_ylabel("returns")
-
-fig.savefig('task2.3/onPoll_'+str(id)+"2.png")
+# id = id_lava_mod
+# num_episodes = 300
+# epsilon=0.2
+# gamma=0.9
+# alpha = 0.3
+#
+# repeat=10
+# avg_returns = []
+# eps_returns = []
+# for _ in range(repeat):
+#     # returns_on,eps_reward = run_OffPolicy(id,num_episodes,epsilon,alpha, gamma,run_steps=True,plot_steps=False)
+#     # returns_on,eps_reward = run_dyna_OffPolicy(id,num_episodes,epsilon,alpha, gamma,run_steps=True,plot_steps=False)
+#     returns_on,eps_reward = run_OnPolicy(id,num_episodes,epsilon,alpha, gamma,run_steps=True,plot_steps=False)
+#     # av_returns_mc, eps_reward = run_MC(id, num_episodes,epsilon,gamma,run_steps=True,plot_steps=False)
+#
+#     avg_returns.append(returns_on)
+#     eps_returns.append(eps_reward)
+#
+# avg_returns = np.array(avg_returns)
+# avg_returns = np.mean(avg_returns,axis=0)
+#
+# fig, (ax1, ax2) = plt.subplots(1,2)
+# fig.suptitle("On pol"+id+"( alpha="+str(alpha)+", gamma="+str(gamma)+", epsilon="+str(epsilon)+")")
+# ax1.plot(avg_returns)
+# ax1.set_title("average returns")
+# ax1.set_xlabel("episodes")
+# ax1.set_ylabel("average returns")
+# ax2.plot(eps_returns)
+# ax2.set_title("episode returns")
+# ax2.set_xlabel("different runs")
+# ax2.set_ylabel("returns")
+#
+# fig.savefig('task2.3/onPoll_'+str(id)+"2.png")
 
 
 #task 2.4
