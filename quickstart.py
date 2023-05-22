@@ -107,12 +107,11 @@ def run_MC(room_id=me.EMPTY_ROOM, num_episodes=300, epsilon=0.2, gamma=0.9,run_s
 # randagent = commons.Custom_RandomAgent("random_agent",action_space=env.action_space)
 # rltask = commons.Custom_RLTask(env, randagent)
 # av_returns = rltask.interact(10000)
-# print(av_returns)
 # plt.plot(av_returns)
 # plt.title("average returns")
-# plt.savefig('avg_return_task1.12.png')
+# plt.savefig('21.05/avg_return_task1.png')
 # plt.show()
-
+#
 # rltask.visualize_episode(max_number_steps=10,saveFig=False)
 
 #Task 1.2
@@ -160,72 +159,37 @@ id_cliff = me.CLIFF
 id_monster = me.ROOM_WITH_MONSTER
 id_lava_mod = me.ROOM_WITH_LAVA_MODIFIED
 
-# empty_room_env = me.get_minihack_envirnment(id, add_pixel=False)
-# state = empty_room_env.reset()
-# epsilon=0.1
-# agent = commons.MonteCarloAgent('mca',empty_room_env.action_space,epsilon)
-# mc_ltask = commons.Custom_RLTask_Learning_MC(empty_room_env, agent, roomID=id, discountF=0.9)
-# av_returns_mc = mc_ltask.interact(1000)
-
-# empty_room_env = me.get_minihack_envirnment(id, add_pixel=True)
-# empty_room_env.reset()
-# mc_ltask2 = commons.Custom_RLTask_Learning_MC(empty_room_env, agent, roomID=id, discountF=0.9,Qvalues = mc_ltask.Qmatrix)
-# mc_ltask2.visualize_episode(max_number_steps=30)
-
-
-
-
-# empty_room_env = me
-# empty_room_env2= me.get_minihack_envirnment(id, add_pixel=False)
-# state = empty_room_env2.reset()
-# agent2 = commons.MonteCarloAgent('mca',empty_room_env2.action_space,epsilon)
-# off_task = commons.Custom_RLTask_Learning_TD_OnPolicy(empty_room_env2,agent2,alpha=0.1,discount_factor=0.9,roomID=id)
-# av_returns_on = off_task.interact(1000)
-
-# empty_room_env = me.get_minihack_envirnment(id, add_pixel=True)
-# empty_room_env.reset()
-# off_task2 = commons.Custom_RLTask_Learning_TD_OnPolicy(empty_room_env,agent2,alpha=0.5,discount_factor=0.9,roomID=id,Qvalues = mc_ltask.Qmatrix)
-# off_task2.visualize_episode(max_number_steps=30,save_im=False)
-
-
-# empty_room_env2= me.get_minihack_envirnment(id, add_pixel=False)
-# state = empty_room_env2.reset()
-# agent2 = commons.MonteCarloAgent('mca',empty_room_env2.action_space,epsilon)
-# off_task = commons.Custom_RLTask_Learning_TD_OffPolicy(empty_room_env2,agent2,alpha=0.1,discount_factor=0.9,roomID=id)
-# av_returns_off = off_task.interact(1000)
-
 #
+# id=id_lava
+# num_episodes = 500
+# epsilon=0.3
+# gamma=0.9
+# alpha = 0.5
+# repeat=3
 #
-id=id_lava
-num_episodes = 500
-epsilon=0.3
-gamma=0.9
-alpha = 0.5
-repeat=3
-
-on_returns = []
-mc_returns=[]
-for _ in range(repeat):
-    returns_on = run_OnPolicy(id,num_episodes,epsilon,alpha, gamma)
-    returns_mc = run_MC(id, num_episodes, epsilon, gamma)
-
-    on_returns.append(returns_on)
-    mc_returns.append(returns_mc)
-
-on_returns = np.array(on_returns)
-av_on_returns = np.mean(on_returns,axis=0)
-mc_returns = np.array(mc_returns)
-av_mc_returns = np.mean(mc_returns,axis=0)
-
-# plt.plot(av_returns_mc, label= "MC")
-plt.plot(av_mc_returns, label= "MC")
-plt.plot(av_on_returns, label= "TD On Policy")
-plt.title("average returns "+id+"( epsilon="+str(epsilon)+", gamma="+str(gamma)+", alpha="+str(alpha)+" )")
-plt.legend()
-plt.xlabel("episodes")
-plt.ylabel("return")
-plt.savefig("21.05/MC_VS_OnPol_"+id+".png")
-plt.show()
+# on_returns = []
+# mc_returns=[]
+# for _ in range(repeat):
+#     returns_on = run_OnPolicy(id,num_episodes,epsilon,alpha, gamma)
+#     returns_mc = run_MC(id, num_episodes, epsilon, gamma)
+#
+#     on_returns.append(returns_on)
+#     mc_returns.append(returns_mc)
+#
+# on_returns = np.array(on_returns)
+# av_on_returns = np.mean(on_returns,axis=0)
+# mc_returns = np.array(mc_returns)
+# av_mc_returns = np.mean(mc_returns,axis=0)
+#
+# # plt.plot(av_returns_mc, label= "MC")
+# plt.plot(av_mc_returns, label= "MC")
+# plt.plot(av_on_returns, label= "TD On Policy")
+# plt.title("average returns "+id+"( epsilon="+str(epsilon)+", gamma="+str(gamma)+", alpha="+str(alpha)+" )")
+# plt.legend()
+# plt.xlabel("episodes")
+# plt.ylabel("return")
+# plt.savefig("21.05/MC_VS_OnPol_"+id+".png")
+# plt.show()
 
 #experiment: different LRs:
 # id = id_lava
@@ -349,49 +313,50 @@ plt.show()
 # id = id_empty
 # id = id_cliff
 # id = id_lava
-# # id = id_lava_mod
-# num_episodes = 300
-# epsilon = 0.2
-# gamma = 0.9
-# alpha = 0.3
-#
-# repeat = 5
-# avg_returns_off = []
-# eps_returns_off = []
-# avg_returns_dynaoff = []
-# eps_returns_dynaoff = []
-# for _ in range(repeat):
-#     returns_off,eps_reward_off = run_OffPolicy(id,num_episodes,epsilon,alpha, gamma,run_steps=True,plot_steps=False)
-#     returns_dynaoff, eps_reward_dynaoff = run_dyna_OffPolicy(id, num_episodes, epsilon, alpha, gamma, run_steps=True,
-#                                                 plot_steps=False)
-#     avg_returns_off.append(returns_off)
-#     eps_returns_off.append(eps_reward_off)
-#     avg_returns_dynaoff.append(returns_dynaoff)
-#     eps_returns_dynaoff.append(eps_reward_dynaoff)
-#
-# avg_returns_off = np.array(avg_returns_off)
-# avg_returns_off = np.mean(avg_returns_off, axis=0)
-# avg_returns_dynaoff = np.array(avg_returns_dynaoff)
-# avg_returns_dynaoff = np.mean(avg_returns_dynaoff, axis=0)
-#
-# fig, (ax1, ax2) = plt.subplots(1, 2)
-# fig.suptitle(
-#     "Q VS dyna-Q" + id + "( alpha=" + str(alpha) + ", gamma=" + str(gamma) + ", epsilon=" + str(epsilon) + ")")
-# ax1.plot(avg_returns_off, label="Q")
-# ax1.plot(avg_returns_dynaoff,label="dyna-Q")
-# ax1.set_title("average returns")
-# ax1.set_xlabel("episodes")
-# ax1.set_ylabel("average returns")
-# ax1.legend()
-# ax2.plot(eps_returns_off,label="Q")
-# ax2.plot(eps_returns_dynaoff,label="dyna-Q")
-# ax2.set_title("episode returns")
-# ax2.set_xlabel("different runs")
-# ax2.legend()
-# ax2.set_ylabel("returns")
-#
-# fig.savefig('task2.4/' + str(id) + ".png")
-# plt.show()
+id = id_monster
+ # id = id_lava_mod
+num_episodes = 500
+epsilon = 0.2
+gamma = 0.9
+alpha = 0.3
+
+repeat = 5
+avg_returns_off = []
+eps_returns_off = []
+avg_returns_dynaoff = []
+eps_returns_dynaoff = []
+for _ in range(repeat):
+    returns_off,eps_reward_off = run_OffPolicy(id,num_episodes,epsilon,alpha, gamma,run_steps=True,plot_steps=False)
+    returns_dynaoff, eps_reward_dynaoff = run_dyna_OffPolicy(id, num_episodes, epsilon, alpha, gamma, run_steps=True,
+                                                plot_steps=False)
+    avg_returns_off.append(returns_off)
+    eps_returns_off.append(eps_reward_off)
+    avg_returns_dynaoff.append(returns_dynaoff)
+    eps_returns_dynaoff.append(eps_reward_dynaoff)
+
+avg_returns_off = np.array(avg_returns_off)
+avg_returns_off = np.mean(avg_returns_off, axis=0)
+avg_returns_dynaoff = np.array(avg_returns_dynaoff)
+avg_returns_dynaoff = np.mean(avg_returns_dynaoff, axis=0)
+
+fig, (ax1, ax2) = plt.subplots(1, 2)
+fig.suptitle(
+    "Q VS dyna-Q" + id + "( alpha=" + str(alpha) + ", gamma=" + str(gamma) + ", epsilon=" + str(epsilon) + ")")
+ax1.plot(avg_returns_off, label="Q")
+ax1.plot(avg_returns_dynaoff,label="dyna-Q")
+ax1.set_title("average returns")
+ax1.set_xlabel("episodes")
+ax1.set_ylabel("average returns")
+ax1.legend()
+ax2.plot(eps_returns_off,label="Q")
+ax2.plot(eps_returns_dynaoff,label="dyna-Q")
+ax2.set_title("episode returns")
+ax2.set_xlabel("different runs")
+ax2.legend()
+ax2.set_ylabel("returns")
+
+fig.savefig('21.05/QvsDynaQ_' + str(id) + "2.png")
+plt.show()
 
 
 
@@ -416,34 +381,6 @@ plt.show()
 
 
 
-# # id = me.ROOM_WITH_LAVA
-# # id = me.EMPTY_ROOM
-# id = me.CLIFF
-# # id = me.ROOM_WITH_MONSTER
-# # id = me.ROOM_WITH_LAVA_MODIFIED
-# empty_room_env = me.get_minihack_envirnment(id, add_pixel=False)
-# state = empty_room_env.reset()
-#
-# eps=0.2
-# agent = commons.MonteCarloAgent('mca',empty_room_env.action_space,eps)
-#
-# task1 = commons.Custom_RLTask_Learning_TD_OffPolicy_Dyna(empty_room_env,agent,alpha=0.4,discount_factor=0.9,roomID=id)
-# av_returns_Q = task1.interact(400)
-# empty_room_env = me.get_minihack_envirnment(id, add_pixel=True)
-# state = empty_room_env.reset()
-# task12 = commons.Custom_RLTask_Learning_TD_OffPolicy_Dyna(empty_room_env,agent,alpha=0.4,discount_factor=0.9,roomID=id,Qvalues = task1.Qmatrix)
-# task12.visualize_episode(max_number_steps=30,save_im=False)
-#
-#
-# empty_room_env = me.get_minihack_envirnment(id, add_pixel=False)
-# state = empty_room_env.reset()
-# task2 = commons.Custom_RLTask_Learning_TD_OffPolicy(empty_room_env,agent,alpha=0.4,discount_factor=0.9,roomID=id)
-# av_returns_Qdyna = task2.interact(400)
-# empty_room_env = me.get_minihack_envirnment(id, add_pixel=True)
-# state = empty_room_env.reset()
-# task22 = commons.Custom_RLTask_Learning_TD_OffPolicy(empty_room_env,agent,alpha=0.4,discount_factor=0.9,roomID=id,Qvalues = task2.Qmatrix)
-# task22.visualize_episode(max_number_steps=30,save_im=False)
-#
 #
 # plt.plot(av_returns_Q, label= "dynaQ")
 # plt.plot(av_returns_Qdyna, label= "Q")

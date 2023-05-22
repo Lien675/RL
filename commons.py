@@ -821,13 +821,7 @@ class Custom_RLTask_Learning_TD_OffPolicy_Dyna(AbstractRLTask):
             sum_rewards = 0 # = G = return
             curr_reward=0
 
-            episodes=[]
             while True:
-                # if not self.useDoulbeEnv:
-                #     curr_state =copy.deepcopy(get_crop_chars_from_observation(self.env._get_observation(self.env.last_observation)))
-                # else:
-                #     curr_state = copy.deepcopy(
-                #         get_crop_chars_from_observation(self.env.env._get_observation(self.env.last_observation)))
                 action = self.agent.act(curr_state, curr_reward, self.Qmatrix, self.states_list)
 
                 self.state_actions.append((curr_state,action)) #used????
@@ -872,7 +866,7 @@ class Custom_RLTask_Learning_TD_OffPolicy_Dyna(AbstractRLTask):
 
                     max_Q_next = np.max(self.Qmatrix[rand_newstate, :])
 
-                    self.Qmatrix[random_state][random_action]+= self.alpha*(rand_reward +max_Q_next-self.Qmatrix[random_state][random_action])
+                    self.Qmatrix[random_state][random_action]+= self.alpha*(rand_reward +self.discountF * max_Q_next-self.Qmatrix[random_state][random_action])
 
 
                 if terminated:
@@ -980,9 +974,10 @@ class Custom_RLTask(AbstractRLTask):
 
         curr_reward=0
         timestep=0
-        self.env.reset()
+
+        curr_state = self.env.reset()
         while True:
-            curr_state = get_crop_chars_from_observation(self.env._get_observation(self.env.last_observation))
+            # curr_state = get_crop_chars_from_observation(self.env._get_observation(self.env.last_observation))
             # let agent choose action
             action = self.agent.act(curr_state, curr_reward)
             # action = self.agent.act(self.env.state, curr_reward)
@@ -990,6 +985,7 @@ class Custom_RLTask(AbstractRLTask):
             observation, reward, terminated, info = self.env.step(action)
             curr_reward = reward
             timestep+=1
+            next_state = get_crop_chars_from_observation(observation)
 
             # self.env.render(action, reward)
             # print("Initial state", commons.get_crop_chars_from_observation(state))
@@ -997,13 +993,14 @@ class Custom_RLTask(AbstractRLTask):
             test = self.env.render("string")
             print(test)
 
-            plt.imshow(get_crop_pixel_from_observation(self.env._get_observation(self.env.last_observation)))
+            plt.imshow(get_crop_pixel_from_observation(observation))
             if saveFig:
                 plt.savefig('step'+str(timestep)+'_1.2.png')
 
             plt.show()
             if terminated or (max_number_steps!=None and timestep==max_number_steps):
                 break
+            curr_state = next_state
 
 
 def extract_user_location_from_state(state):
